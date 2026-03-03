@@ -1,25 +1,1434 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Мое портфолио</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Валиева Анжелика | Security Developer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff41;
+            --secondary: #008f11;
+            --dark: #0a0a0a;
+            --darker: #000000;
+            --light: #f8f9fa;
+            --gray: #1a1a1a;
+            --accent: #00ccff;
+            --text: #00ff41;
+            --matrix-bg: #0c0b0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', 'Share Tech Mono', 'Fira Code', monospace;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Matrix rain effect */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px,0) skew(0deg); }
+            4%, 60% { transform: translate(-2px,0) skew(0deg); }
+            62% { transform: translate(0,0) skew(5deg); }
+        }
+
+        .glitch:before,
+        .glitch:after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            width: 100%;
+            background: var(--dark);
+        }
+
+        .glitch:before {
+            animation: glitchTop 1s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+            -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+        }
+
+        @keyframes glitchTop {
+            2%, 64% { transform: translate(2px,-2px); }
+            4%, 60% { transform: translate(-2px,2px); }
+            62% { transform: translate(13px,-1px) skew(-13deg); }
+        }
+
+        .glitch:after {
+            animation: glitchBottom 1.5s infinite;
+            clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+            -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitchBottom {
+            2%, 64% { transform: translate(-2px,2px); }
+            4%, 60% { transform: translate(-2px,-2px); }
+            62% { transform: translate(-22px,11px) skew(21deg); }
+        }
+
+        /* Навигация */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            position: relative;
+        }
+
+        .logo::before {
+            content: '[';
+            color: var(--accent);
+            margin-right: 5px;
+        }
+
+        .logo::after {
+            content: ']';
+            color: var(--accent);
+            margin-left: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        .nav-links a::before {
+            content: '>';
+            opacity: 0;
+            margin-right: 5px;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover::before {
+            opacity: 1;
+        }
+
+        /* Герой-секция */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-window {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .terminal-btn {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .terminal-btn:nth-child(2) {
+            opacity: 0.7;
+        }
+
+        .terminal-btn:nth-child(3) {
+            opacity: 0.4;
+        }
+
+        .terminal-title {
+            color: var(--primary);
+            margin-left: auto;
+            font-size: 0.9rem;
+        }
+
+        .terminal-line {
+            margin: 10px 0;
+            font-size: 1.1rem;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .prompt {
+            color: var(--accent);
+            margin-right: 10px;
+        }
+
+        .command {
+            color: var(--text);
+        }
+
+        .output {
+            color: var(--primary);
+            margin-left: 20px;
+            width: 100%;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2rem;
+            background: var(--primary);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .matrix-text {
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .contact-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .contact-btn:hover::before {
+            left: 100%;
+        }
+
+        .contact-btn:hover {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Секции */
+        section {
+            padding: 100px 10%;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .section-title::before {
+            content: '/* ';
+            color: var(--accent);
+        }
+
+        .section-title::after {
+            content: ' */';
+            color: var(--accent);
+        }
+
+        /* Навыки */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2rem;
+            border: 2px solid var(--primary);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .skill-category:hover::before {
+            opacity: 0.3;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+
+        .skill-category h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .skill-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .skill-bar {
+            height: 4px;
+            background: #1a1a1a;
+            border: 1px solid var(--primary);
+            position: relative;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            position: relative;
+            transition: width 1.5s;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Образование */
+        .education {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2.5rem;
+            border: 2px solid var(--primary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .education-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .education-item:last-child {
+            border-bottom: none;
+        }
+
+        .education-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .education-place {
+            font-size: 1.4rem;
+            color: var(--accent);
+        }
+
+        .education-period {
+            background: transparent;
+            padding: 5px 15px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Проекты */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .project-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+
+        .project-image {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(45deg, var(--dark), var(--gray));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .project-image i {
+            font-size: 4rem;
+            color: var(--primary);
+            opacity: 0.3;
+        }
+
+        .project-tech {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 15px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        .project-info {
+            padding: 1.5rem;
+        }
+
+        .project-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .project-info p {
+            color: var(--text);
+            margin-bottom: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .project-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            border: 1px solid var(--primary);
+            padding: 5px 15px;
+        }
+
+        .project-link:hover {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Контакты */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            min-width: 30px;
+        }
+
+        .contact-details h3 {
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .contact-details a, .contact-details p {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-details a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+        }
+
+        .looking-for {
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid var(--primary);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .looking-for p {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--text);
+        }
+
+        .looking-for i {
+            color: var(--accent);
+        }
+
+        .contact-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--primary);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: var(--text);
+            opacity: 0.5;
+        }
+
+        /* Футер */
+        footer {
+            background: #000000;
+            padding: 3rem 10%;
+            text-align: center;
+            border-top: 2px solid var(--primary);
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            padding: 5px 10px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            border: 2px solid var(--primary);
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .copyright {
+            color: var(--text);
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+
+        /* Matrix rain canvas */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .hero {
+                padding: 0 5%;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                padding-top: 100px;
+            }
+            
+            .skills-container,
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .terminal-window {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+     /* Хакерский профиль справа */
+.hacker-profile {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 380px;
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid #00ff41;
+    padding: 20px;
+    font-family: monospace;
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+    z-index: 1;
+    backdrop-filter: blur(5px);
+    animation: profileAppear 1s ease-out;
+}
+
+@keyframes profileAppear {
+    0% {
+        opacity: 0;
+        transform: translate(50px, -50%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+}
+
+.profile-terminal {
+    position: relative;
+    z-index: 2;
+}
+
+.terminal-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    border-bottom: 1px solid #00ff41;
+    margin-bottom: 15px;
+    color: #00ff41;
+    font-size: 12px;
+}
+
+.ascii-art {
+    color: #00ff41;
+    opacity: 0.5;
+    margin-bottom: 15px;
+    font-size: 8px;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.ascii-art pre {
+    color: #00ff41;
+    font-family: monospace;
+    margin: 0;
+}
+
+.profile-image-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 20px;
+    border: 2px solid #00ff41;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(150%) brightness(0.7);
+    opacity: 0.8;
+    transition: all 0.3s;
+}
+
+.profile-image-container:hover .profile-image {
+    opacity: 1;
+    filter: grayscale(50%) contrast(100%) brightness(1);
+}
+
+.image-matrix {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 65, 0.1) 2px,
+        rgba(0, 255, 65, 0.1) 4px
+    );
+    pointer-events: none;
+    animation: matrixScroll 10s linear infinite;
+}
+
+@keyframes matrixScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+}
+
+.profile-data {
+    background: #000;
+    padding: 10px;
+    border: 1px solid #00ff41;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+.data-label {
+    color: #00ff41;
+    opacity: 0.7;
+}
+
+.data-value {
+    color: #00ff41;
+    text-shadow: 0 0 5px #00ff41;
+}
+
+.blinking {
+    animation: blinkText 1s infinite;
+}
+
+@keyframes blinkText {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+.profile-glitch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, 
+        transparent 40%,
+        rgba(0, 255, 65, 0.1) 50%,
+        transparent 60%);
+    animation: glitchMove 3s infinite;
+    pointer-events: none;
+}
+
+@keyframes glitchMove {
+    0% { transform: translateX(-100%) skewX(-10deg); }
+    100% { transform: translateX(200%) skewX(-10deg); }
+}
+
+.profile-scan {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 255, 65, 0.5);
+    box-shadow: 0 0 20px #00ff41;
+    animation: profileScan 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes profileScan {
+    0% { top: -10px; }
+    100% { top: 110%; }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 1100px) {
+    .hero {
+        flex-direction: column;
+        padding-top: 100px;
+    }
+    
+    .hero-content {
+        width: 100%;
+        margin-bottom: 3rem;
+    }
+    
+    .hacker-profile {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        margin: 2rem auto;
+        width: 90%;
+        max-width: 380px;
+    }
+}
+
+
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Имя Фамилия</h1>
-        <p>Frontend Developer</p>
-    </header>
+    <canvas id="matrix"></canvas>
     
-    <section id="projects">
-        <h2>Мои работы</h2>
-        <div class="project">
-            <h3>Проект 1</h3>
-            <p>Описание проекта...</p>
+    <!-- Навигация -->
+    <nav>
+        <div class="glitch" data-text="Anzelika779">Anzelika779</div>
+        <div class="nav-links">
+            <a href="#home">_home</a>
+            <a href="#skills">_skills</a>
+            <a href="#education">_education</a>
+            <a href="#projects">_projects</a>
+            <a href="#contact">_contact</a>
+        </div>
+    </nav>
+
+    <!-- Герой-секция с фото справа -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-btn"></div>
+                <div class="terminal-btn"></div>
+                <div class="terminal-btn"></div>
+                <div class="terminal-title">root@anzelika:~$</div>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt">$></span>
+                <span class="command">whoami</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">> Валиева Анжелика</span>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt">$></span>
+                <span class="command">cat location.txt</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">> Ижевск, Россия</span>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt">$></span>
+                <span class="command">./status --current</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">> Junior Developer | Ищу стажировку</span>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt">$></span>
+                <span class="command">./skills --list</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">> [C#] [ASP.NET] [JavaScript] [HTML/CSS] [SQL]</span>
+            </div>
+            
+            <div class="contact-buttons">
+                <a href="https://t.me/Anzelika779" class="contact-btn" target="_blank">
+                    <i class="fab fa-telegram"></i> @Anzelika779
+                </a>
+                <a href="mailto:anzelikavalieva511@gmail.com" class="contact-btn">
+                    <i class="fas fa-envelope"></i> anzelikavalieva511@gmail.com
+                </a>
+                <a href="https://github.com/AngelikaDev" class="contact-btn" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            
+            <div class="terminal-line">
+                <span class="prompt">$></span>
+                <span class="command">./connect --contact</span>
+                <span class="cursor"></span>
+            </div>
+            
+            <div class="matrix-text">
+                <span id="typing"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Хакерский профиль справа -->
+    <div class="hacker-profile">
+        <div class="profile-glitch"></div>
+        <div class="profile-scan"></div>
+        <div class="profile-terminal">
+            <div class="terminal-header">
+                <span>[PROFILE_IMAGE]</span>
+                <span>DECODING...</span>
+            </div>
+            <div class="ascii-art">
+                <pre>
+    ╔══════════════╗
+    ║  ██████████  ║
+    ║ ██      ████ ║
+    ║██  ░░░░  ███ ║
+    ║██  ░░░░  ███ ║
+    ║ ██      ████ ║
+    ║  ██████████  ║
+    ║    ██████    ║
+    ╚══════════════╝
+                </pre>
+            </div>
+            <div class="profile-image-container">
+                <img src="C:\Users\anzel\Downloads\KOKzlIlgiPthsAZ1sboS2grAkJsDieS1PWLh0dBHOh8zVyxtFBr22PEEfQ6qiFr7fUNfm11hXMTRQo59wBnt2fxK.jpg" alt="Anzelika" class="profile-image">
+                <div class="image-matrix"></div>
+            </div>
+            <div class="profile-data">
+                <div class="data-row">
+                    <span class="data-label">HASH:</span>
+                    <span class="data-value">4e6e7a656c696b61373739</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">STATUS:</span>
+                    <span class="data-value blinking">ACTIVE</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">LEVEL:</span>
+                    <span class="data-value">[████████░░] 80%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Навыки -->
+    <section id="skills">
+        <h2 class="section-title">Технологический стек</h2>
+        <div class="skills-container">
+            <div class="skill-category">
+                <h3>Frontend</h3>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>HTML5/CSS3</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>JavaScript</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 75%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>React</span>
+                        <span>60%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 60%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>PHP</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>Backend</h3>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>C#</span>
+                        <span>80%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 80%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>ASP.NET</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 75%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>ADO.NET</span>
+                        <span>70%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>SQL</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>Инструменты</h3>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>Git</span>
+                        <span>80%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 80%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>Postman</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 75%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>WPF</span>
+                        <span>70%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span>.NET</span>
+                        <span>80%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
-    
+
+    <!-- Образование -->
+    <section id="education">
+        <h2 class="section-title">Образование</h2>
+        <div class="education">
+            <div class="education-item">
+                <div class="education-header">
+                    <div class="education-place">Компьютерная Академия TOP (Ижевск)</div>
+                    <div class="education-period">2023-2026</div>
+                </div>
+                <div class="education-specialty">Специализация: Разработка ПО</div>
+                <p>Углубленное изучение современных технологий разработки, алгоритмов и структур данных, проектирования ПО и работы в команде.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Проекты -->
+    <section id="projects">
+        <h2 class="section-title">Мои проекты</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-image">
+                    <i class="fas fa-code"></i>
+                    <div class="project-tech">C# • ASP.NET • SQL</div>
+                </div>
+                <div class="project-info">
+                    <h3>Платформа для обучения</h3>
+                    <p>Курсовая работа с использованием C#, ASP.NET и SQL. Платформа включает систему управления курсами, тестирования и отслеживания прогресса студентов.</p>
+                    <div class="project-links">
+                       <a href="https://github.com/AngelikaDev/NewRepoLearningPlatform/tree/main" target="_blank">github.com/AngelikaDev</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="project-image">
+                    <i class="fas fa-camera"></i>
+                    <div class="project-tech">HTML • CSS • JavaScript</div>
+                </div>
+                <div class="project-info">
+                    <h3>Фотохостинг</h3>
+                    <p>Экзаменационный проект с адаптивным дизайном. Платформа для загрузки и обмена фотографиями с возможностью создания галерей и тегов.</p>
+                    <div class="project-links">
+                        <a href="https://github.com/AngelikaDev/NaturePhotoHosting" target="_blank">github.com/AngelikaDev</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contact">
+        <h2 class="section-title">Контакты</h2>
+        <div class="looking-for">
+            <p><i class="fas fa-search"></i> # Ищу возможности для стажировки в разработке</p>
+            <p><i class="fas fa-book"></i> # Постоянно изучаю новые технологии</p>
+            <p><i class="fas fa-rocket"></i> # Готова к сложным задачам</p>
+        </div>
+        
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="contact-details">
+                        <h3>EMAIL</h3>
+                        <a href="mailto:anzelikavalieva511@gmail.com">anzelikavalieva511@gmail.com</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fab fa-github"></i></div>
+                    <div class="contact-details">
+                        <h3>GITHUB</h3>
+                        <a href="https://github.com/AngelikaDev" target="_blank">github.com/AngelikaDev</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fab fa-telegram"></i></div>
+                    <div class="contact-details">
+                        <h3>TELEGRAM</h3>
+                        <a href="https://t.me/Anzelika779" target="_blank">@Anzelika779</a>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="contact-details">
+                        <h3>LOCATION</h3>
+                        <p>Ижевск, Россия</p>
+                    </div>
+                </div>
+            </div>
+        
+    </section>
+
+    <!-- Футер -->
     <footer>
-        <p>Свяжитесь со мной: email@example.com</p>
+        <div class="footer-logo">Anzelika_779</div>
+        <div class="footer-links">
+            <a href="#home">_home</a>
+            <a href="#skills">_skills</a>
+            <a href="#education">_education</a>
+            <a href="#projects">_projects</a>
+            <a href="#contact">_contact</a>
+        </div>
+        
+        <div class="social-icons">
+            <a href="https://github.com/AngelikaDev" class="social-icon" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://t.me/Anzelika779" class="social-icon" target="_blank"><i class="fab fa-telegram"></i></a>
+            <a href="mailto:anzelikavalieva511@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p class="copyright">© 2026 Anzelika779. Все права защищены.</p>
     </footer>
+
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*()_+{}[]<>?/\\|~`';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        // Typing effect
+        const typingElement = document.getElementById('typing');
+        const phrases = [
+            '> System: Access granted',
+            '> User: Anzelika779 verified',
+            '> Skills: C#, ASP.NET, SQL, JavaScript',
+            '> Status: Ready for challenges',
+            '> Connect: Telegram @Anzelika779'
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeEffect() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                typingElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isDeleting = true;
+                setTimeout(typeEffect, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                setTimeout(typeEffect, 500);
+            } else {
+                setTimeout(typeEffect, isDeleting ? 50 : 100);
+            }
+        }
+
+        setTimeout(typeEffect, 1000);
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('> Сообщение отправлено. Ожидайте ответа...');
+            this.reset();
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.padding = '1rem 5%';
+                nav.style.boxShadow = '0 5px 20px rgba(0, 255, 65, 0.2)';
+            } else {
+                nav.style.padding = '2rem 5%';
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Skill bars animation
+        const skillProgresses = document.querySelectorAll('.skill-progress');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const width = entry.target.style.width;
+                    entry.target.style.width = '0';
+                    setTimeout(() => {
+                        entry.target.style.width = width;
+                    }, 300);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        skillProgresses.forEach(progress => {
+            observer.observe(progress);
+        });
+
+        // Card animations
+        document.querySelectorAll('.project-card, .skill-category').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
